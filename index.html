@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soal Latihan PPKn Kelas XII - Semester Ganjil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-pink-primary: #ec4899; /* Pink 500 */
+            --color-pink-secondary: #f472b6; /* Pink 400 */
+            --color-pink-light: #fbcfe8; /* Pink 200 */
+            --color-pink-bg: #fdf2f8; /* Pink 50 */
+            --color-pink-accent: #db2777; /* Pink 600 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-pink-bg);
+            transition: all 0.3s ease-in-out;
+        }
+        .header-bg {
+            background-color: var(--color-pink-primary);
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.1), 0 4px 6px -2px rgba(236, 72, 153, 0.05);
+            background-color: white;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-primary {
+            background-color: var(--color-pink-accent);
+            color: white;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: var(--color-pink-primary);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+        .option-item {
+            cursor: pointer;
+            border: 2px solid var(--color-pink-light);
+            transition: all 0.2s;
+        }
+        .option-item:hover {
+            border-color: var(--color-pink-secondary);
+            background-color: var(--color-pink-light);
+        }
+        .correct-answer {
+            border-color: #10b981; /* Emerald 500 */
+            background-color: #d1fae5; /* Emerald 100 */
+        }
+        .wrong-answer {
+            border-color: #ef4444; /* Red 500 */
+            background-color: #fee2e2; /* Red 100 */
+        }
+        .disabled-option {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app-container" class="w-full max-w-2xl">
+        
+        <!-- Header -->
+        <div class="header-bg text-white p-6 mb-6 rounded-t-xl card">
+            <h1 class="text-3xl font-bold text-center">Soal Latihan PPKn Kelas XII</h1>
+            <p class="text-center mt-1 text-sm">Persiapan Semester Ganjil - Kamu Pasti Bisa!</p>
+        </div>
+
+        <!-- Biodata Page -->
+        <div id="biodata-page" class="card p-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-700">Isi Biodata Dulu, Ya!</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="nama" class="w-full p-3 border border-pink-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="Contoh: Bunga Melati" required>
+                </div>
+                <div>
+                    <label for="kelas" class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                    <select id="kelas" class="w-full p-3 border border-pink-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                        <option value="" disabled selected>Pilih Kelas</option>
+                        <option value="XII-1">XII-1</option>
+                        <option value="XII-2">XII-2</option>
+                        <option value="XII-3">XII-3</option>
+                        <option value="XII-4">XII-4</option>
+                        <option value="XII-5">XII-5</option>
+                        <option value="XII-6">XII-6</option>
+                    </select>
+                </div>
+            </div>
+            <button id="start-quiz-btn" class="btn-primary w-full mt-8 p-3 font-bold rounded-lg text-lg">Mulai Latihan</button>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz-page" class="card p-8 hidden">
+            <div class="flex justify-between items-center mb-6 border-b pb-4 border-pink-200">
+                <p class="text-md font-semibold text-gray-600">Soal <span id="current-q-num">1</span> dari 40</p>
+                <p class="text-md font-semibold text-pink-500" id="user-info"></p>
+            </div>
+            
+            <div id="question-area">
+                <!-- Question and Options will be injected here -->
+            </div>
+
+            <div id="feedback-area" class="mt-6 p-4 rounded-lg hidden">
+                <!-- Feedback will be injected here -->
+            </div>
+            
+            <button id="next-q-btn" class="btn-primary w-full mt-6 p-3 font-bold rounded-lg text-lg hidden">Soal Selanjutnya</button>
+        </div>
+
+        <!-- Result Page -->
+        <div id="result-page" class="card p-8 hidden text-center">
+            <h2 class="text-3xl font-bold mb-4 text-pink-700">Hasil Latihanmu!</h2>
+            <p id="result-user-info" class="text-lg text-gray-600 mb-6"></p>
+            
+            <div class="bg-pink-light p-6 rounded-lg mb-6">
+                <p class="text-2xl font-medium text-gray-700">Nilai Akhir</p>
+                <p id="final-score" class="text-6xl font-extrabold text-pink-accent mt-2"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-left text-gray-700">
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <p class="font-semibold">Jawaban Benar:</p>
+                    <p id="correct-count" class="text-2xl text-green-600 font-bold"></p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <p class="font-semibold">Jawaban Salah:</p>
+                    <p id="wrong-count" class="text-2xl text-red-600 font-bold"></p>
+                </div>
+            </div>
+
+            <button id="restart-btn" class="btn-primary w-full mt-8 p-3 font-bold rounded-lg text-lg">Ulangi Latihan</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Soal
+        const questions = [
+            // --- Kategori Mudah (10 Soal) ---
+            {
+                id: 1, category: "Mudah",
+                question: "Hak dasar setiap warga negara Indonesia untuk mendapatkan pendidikan dijamin dalam UUD NRI Tahun 1945. Pasal berapakah yang mengatur hak tersebut?",
+                options: ["Pasal 27 ayat (2)", "Pasal 28C ayat (1)", "Pasal 31 ayat (1)", "Pasal 33 ayat (1)"],
+                correctAnswer: "Pasal 31 ayat (1)",
+                explanation: "Pasal 31 ayat (1) UUD NRI Tahun 1945 secara eksplisit menyatakan bahwa 'Setiap warga negara berhak mendapatkan pendidikan'.",
+                topic: "Hak Pendidikan",
+            },
+            {
+                id: 2, category: "Mudah",
+                question: "Salah satu kewajiban utama warga negara terhadap negara adalah ikut serta dalam usaha pertahanan dan keamanan negara. Ketentuan ini diatur dalam...",
+                options: ["Pasal 27 ayat (3)", "Pasal 29 ayat (2)", "Pasal 30 ayat (1)", "Pasal 34 ayat (1)"],
+                correctAnswer: "Pasal 27 ayat (3)",
+                explanation: "Pasal 27 ayat (3) UUD NRI Tahun 1945 menyatakan 'Setiap warga negara berhak dan wajib ikut serta dalam upaya pembelaan negara'.",
+                topic: "Kewajiban Bela Negara",
+            },
+            {
+                id: 3, category: "Mudah",
+                question: "Perbedaan mendasar antara 'Hak' dan 'Kewajiban' warga negara adalah...",
+                options: ["Hak adalah sesuatu yang harus dituntut, Kewajiban adalah sesuatu yang harus diberikan negara.", "Hak adalah segala sesuatu yang didapatkan, Kewajiban adalah segala sesuatu yang harus dilaksanakan.", "Hak diatur oleh UU, Kewajiban diatur oleh pemerintah.", "Hak berlaku untuk individu, Kewajiban hanya untuk kelompok."],
+                correctAnswer: "Hak adalah segala sesuatu yang didapatkan, Kewajiban adalah segala sesuatu yang harus dilaksanakan.",
+                explanation: "Secara sederhana, Hak adalah apa yang kita terima, sedangkan Kewajiban adalah apa yang harus kita lakukan atau tunaikan.",
+                topic: "Konsep Dasar",
+            },
+            {
+                id: 4, category: "Mudah",
+                question: "Contoh paling umum dari pengingkaran kewajiban warga negara di bidang ekonomi adalah...",
+                options: ["Menggunakan fasilitas umum untuk kepentingan pribadi.", "Tidak membayar pajak tepat waktu.", "Melakukan unjuk rasa tanpa izin.", "Mengambil cuti di hari kerja."],
+                correctAnswer: "Tidak membayar pajak tepat waktu.",
+                explanation: "Membayar pajak adalah kewajiban konstitusional warga negara. Tidak membayarnya termasuk pengingkaran kewajiban di bidang ekonomi.",
+                topic: "Pengingkaran Kewajiban",
+            },
+            {
+                id: 5, category: "Mudah",
+                question: "Hak warga negara untuk berpendapat, berkumpul, dan berserikat dijamin dalam Pasal...",
+                options: ["Pasal 28", "Pasal 28E ayat (3)", "Pasal 29 ayat (2)", "Pasal 30 ayat (1)"],
+                correctAnswer: "Pasal 28E ayat (3)",
+                explanation: "Pasal 28E ayat (3) UUD NRI Tahun 1945 mengatur kebebasan berserikat, berkumpul, dan mengeluarkan pendapat.",
+                topic: "Hak Politik",
+            },
+            {
+                id: 6, category: "Mudah",
+                question: "Setiap warga negara wajib menaati hukum dan pemerintahan. Aturan ini ditegaskan dalam Pasal...",
+                options: ["Pasal 26 ayat (1)", "Pasal 27 ayat (1)", "Pasal 28G ayat (1)", "Pasal 30 ayat (2)"],
+                correctAnswer: "Pasal 27 ayat (1)",
+                explanation: "Pasal 27 ayat (1) menyatakan 'Segala warga negara bersamaan kedudukannya di dalam hukum dan pemerintahan dan wajib menjunjung hukum dan pemerintahan itu dengan tidak ada kecualinya.'",
+                topic: "Kewajiban Hukum",
+            },
+            {
+                id: 7, category: "Mudah",
+                question: "Bentuk pelanggaran hak warga negara yang paling sering terjadi di lingkungan sekolah adalah...",
+                options: ["Tidak mengikuti upacara bendera.", "Membayar iuran OSIS.", "Melakukan perundungan (bullying).", "Mendapat nilai yang buruk."],
+                correctAnswer: "Melakukan perundungan (bullying).",
+                explanation: "Perundungan melanggar hak siswa untuk merasa aman, nyaman, dan mendapatkan perlakuan yang sama tanpa kekerasan.",
+                topic: "Pelanggaran Hak",
+            },
+            {
+                id: 8, category: "Mudah",
+                question: "Kewajiban untuk menghormati hak asasi manusia orang lain diatur dalam Pasal...",
+                options: ["Pasal 28A", "Pasal 28J ayat (1)", "Pasal 28H", "Pasal 28I"],
+                correctAnswer: "Pasal 28J ayat (1)",
+                explanation: "Pasal 28J ayat (1) menyatakan 'Setiap orang wajib menghormati hak asasi manusia orang lain dalam tertib kehidupan bermasyarakat, berbangsa, dan bernegara.'",
+                topic: "Kewajiban HAM",
+            },
+            {
+                id: 9, category: "Mudah",
+                question: "Hak warga negara yang berkaitan dengan kebebasan memeluk agama dan beribadah menurut agamanya dijamin dalam Pasal...",
+                options: ["Pasal 29 ayat (2)", "Pasal 30 ayat (1)", "Pasal 31 ayat (2)", "Pasal 32 ayat (1)"],
+                correctAnswer: "Pasal 29 ayat (2)",
+                explanation: "Pasal 29 ayat (2) UUD NRI Tahun 1945 menjamin kemerdekaan tiap-tiap penduduk untuk memeluk agamanya masing-masing dan untuk beribadat menurut agamanya dan kepercayaannya itu.",
+                topic: "Hak Agama",
+            },
+            {
+                id: 10, category: "Mudah",
+                question: "Bentuk kewajiban yang harus didahulukan pelaksanaannya sebelum menuntut hak adalah...",
+                options: ["Membayar utang negara.", "Melaksanakan aturan yang berlaku.", "Mendapatkan pekerjaan.", "Mendapatkan jaminan kesehatan."],
+                correctAnswer: "Melaksanakan aturan yang berlaku.",
+                explanation: "Kewajiban untuk menaati hukum dan aturan adalah dasar bagi warga negara untuk dapat menuntut hak-haknya secara sah.",
+                topic: "Prioritas",
+            },
+            
+            // --- Kategori Sedang/Penerapan (20 Soal) ---
+            {
+                id: 11, category: "Sedang",
+                question: "Seorang siswa diwajibkan mengikuti upacara bendera (kewajiban). Setelah upacara, ia berhak mendapatkan pelajaran yang baik (hak). Hal ini menunjukkan adanya...",
+                options: ["Hubungan kausalitas antara hak dan kewajiban.", "Pengaturan hak oleh sekolah, bukan negara.", "Kewajiban harus lebih didahulukan daripada hak.", "Hak dan kewajiban hanya berlaku di lingkungan sekolah."],
+                correctAnswer: "Hubungan kausalitas antara hak dan kewajiban.",
+                explanation: "Pelaksanaan hak seringkali bergantung pada pemenuhan kewajiban, menciptakan hubungan sebab-akibat (kausalitas) yang saling terkait.",
+                topic: "Keterkaitan",
+            },
+            {
+                id: 12, category: "Sedang",
+                question: "Seseorang yang tidak pernah berpartisipasi dalam pemilihan umum (Golput) merupakan cerminan dari...",
+                options: ["Pelanggaran hak karena tidak memilih.", "Pelanggaran hak karena tidak dijamin haknya.", "Pengingkaran kewajiban berpolitik.", "Pelaksanaan hak untuk tidak memilih."],
+                correctAnswer: "Pengingkaran kewajiban berpolitik.",
+                explanation: "Meskipun hak memilih adalah hak, namun partisipasi dalam proses demokrasi seringkali dianggap sebagai kewajiban moral atau kewajiban politik warga negara yang baik.",
+                topic: "Kewajiban Politik",
+            },
+            {
+                id: 13, category: "Sedang",
+                question: "Pemerintah daerah menunda penyaluran bantuan sosial bagi warga miskin yang sudah terdaftar. Tindakan ini termasuk bentuk...",
+                options: ["Pengingkaran kewajiban oleh warga negara.", "Pelanggaran hak warga negara atas jaminan sosial.", "Kewajiban pemerintah untuk menunda penyaluran.", "Bentuk pengabaian hak ekonomi."],
+                correctAnswer: "Pelanggaran hak warga negara atas jaminan sosial.",
+                explanation: "Warga negara berhak atas jaminan sosial. Penundaan atau pengabaian penyaluran bantuan oleh pemerintah merupakan pelanggaran terhadap hak warga negara.",
+                topic: "Pelanggaran Hak Pemerintah",
+            },
+            {
+                id: 14, category: "Sedang",
+                question: "Seorang pedagang kaki lima (PKL) menempati trotoar untuk berjualan, sehingga pejalan kaki terpaksa menggunakan badan jalan. Hal ini merupakan contoh dari...",
+                options: ["Pelanggaran hak pejalan kaki dan pengingkaran kewajiban menjaga fasilitas umum.", "Pelaksanaan hak untuk mencari nafkah.", "Pengabaian kewajiban oleh pemerintah daerah.", "Pelanggaran hak pedagang untuk berdagang."],
+                correctAnswer: "Pelanggaran hak pejalan kaki dan pengingkaran kewajiban menjaga fasilitas umum.",
+                explanation: "PKL melanggar hak pejalan kaki atas trotoar dan mengingkari kewajiban untuk menjaga ketertiban umum dan tidak merusak fungsi fasilitas umum.",
+                topic: "Hak vs Kewajiban",
+            },
+            {
+                id: 15, category: "Sedang",
+                question: "Dalam konteks hak dan kewajiban, kewajiban untuk melestarikan lingkungan hidup diatur dalam Pasal 99 Undang-Undang Nomor 32 Tahun 2009. Wujud implementasi paling tepat dari kewajiban ini adalah...",
+                options: ["Menuntut pemerintah agar menyediakan udara bersih.", "Membuang sampah pada tempatnya dan mendaur ulang.", "Berhak mendapatkan ganti rugi atas kerusakan alam.", "Melarang semua kegiatan industri yang merusak lingkungan."],
+                correctAnswer: "Membuang sampah pada tempatnya dan mendaur ulang.",
+                explanation: "Implementasi kewajiban melestarikan lingkungan paling nyata dan terukur di level individu adalah dengan menjaga kebersihan dan berupaya mengurangi limbah (daur ulang).",
+                topic: "Kewajiban Lingkungan",
+            },
+            {
+                id: 16, category: "Sedang",
+                question: "Pasal 30 ayat (1) UUD NRI Tahun 1945 menyatakan 'Tiap-tiap warga negara berhak dan wajib ikut serta dalam usaha pertahanan dan keamanan negara.' Kata 'berhak' dalam pasal ini dapat diartikan sebagai...",
+                options: ["Hak untuk menjadi prajurit TNI atau Polri.", "Hak untuk mendapatkan perlindungan dari negara.", "Hak untuk menolak jika negara dalam bahaya.", "Hak untuk hanya terlibat jika mendapat upah tinggi."],
+                correctAnswer: "Hak untuk mendapatkan perlindungan dari negara.",
+                explanation: "Warga negara berhak dan wajib. Kewajiban (ikut serta) melahirkan Hak (dilindungi negara saat melakukan kewajiban tersebut, serta berhak mengatur bentuk partisipasi).",
+                topic: "Interpretasi Pasal",
+            },
+            {
+                id: 17, category: "Sedang",
+                question: "Jika hak warga negara atas pekerjaan dan penghidupan yang layak (Pasal 27 ayat 2) dilanggar, hal ini dapat memicu pengingkaran kewajiban oleh masyarakat, yaitu...",
+                options: ["Tidak membayar pajak.", "Meningkatnya angka kriminalitas.", "Menaati hukum yang berlaku.", "Ikut serta dalam Pemilu."],
+                correctAnswer: "Meningkatnya angka kriminalitas.",
+                explanation: "Pelanggaran hak atas penghidupan yang layak (kemiskinan, pengangguran) seringkali menjadi pemicu utama masyarakat melakukan tindakan melawan hukum (pengingkaran kewajiban hukum/kriminalitas).",
+                topic: "Sebab Akibat",
+            },
+            {
+                id: 18, category: "Sedang",
+                question: "Seorang guru dilarang keras menyampaikan kritik terhadap kebijakan sekolah. Hal ini merupakan pelanggaran terhadap hak guru dan siswa, terutama hak...",
+                options: ["Hak mendapatkan pengajaran.", "Hak berpendapat dan berekspresi.", "Hak untuk mendapatkan lingkungan bersih.", "Hak mendapatkan jaminan sosial."],
+                correctAnswer: "Hak berpendapat dan berekspresi.",
+                explanation: "Pembatasan kritik (pendapat) melanggar Pasal 28E ayat (3) yang menjamin hak setiap orang untuk mengeluarkan pendapat.",
+                topic: "Pelanggaran di Sekolah",
+            },
+            {
+                id: 19, category: "Sedang",
+                question: "Kewajiban seorang pelajar yang paling mendasar dalam rangka mewujudkan haknya atas pendidikan adalah...",
+                options: ["Membayar SPP tepat waktu.", "Mengikuti kegiatan ekstrakurikuler.", "Belajar dengan giat dan mematuhi tata tertib sekolah.", "Menjaga nama baik orang tua."],
+                correctAnswer: "Belajar dengan giat dan mematuhi tata tertib sekolah.",
+                explanation: "Kewajiban inti pelajar adalah belajar dan menaati aturan sekolah sebagai syarat dasar mendapatkan hak pendidikan yang berkualitas.",
+                topic: "Kewajiban Pelajar",
+            },
+            {
+                id: 20, category: "Sedang",
+                question: "Mengapa pelanggaran hak dan pengingkaran kewajiban harus dicegah sejak dini?",
+                options: ["Agar masyarakat tidak terlalu banyak menuntut hak.", "Untuk menjaga agar pemerintah tidak disalahkan.", "Karena dapat merusak harmoni, ketertiban, dan keadilan sosial.", "Supaya UUD NRI 1945 tetap relevan."],
+                correctAnswer: "Karena dapat merusak harmoni, ketertiban, dan keadilan sosial.",
+                explanation: "Pelanggaran hak dan pengingkaran kewajiban secara langsung mengganggu keseimbangan dan keadilan, yang merupakan pilar utama kehidupan bernegara.",
+                topic: "Pentingnya Keseimbangan",
+            },
+            {
+                id: 21, category: "Sedang",
+                question: "Seorang anggota DPR tidak pernah hadir dalam sidang paripurna. Tindakan ini tergolong...",
+                options: ["Pelanggaran hak rakyat untuk diwakili.", "Pengingkaran kewajiban sebagai wakil rakyat.", "Pelaksanaan hak untuk istirahat.", "Bukan termasuk pelanggaran karena tidak merugikan negara secara langsung."],
+                correctAnswer: "Pengingkaran kewajiban sebagai wakil rakyat.",
+                explanation: "Kehadiran dalam sidang adalah kewajiban dasar seorang wakil rakyat untuk melaksanakan tugasnya, yaitu mewakili dan menyuarakan aspirasi rakyat.",
+                topic: "Kewajiban Pejabat",
+            },
+            {
+                id: 22, category: "Sedang",
+                question: "Hak warga negara untuk mengembangkan kebudayaan nasional Indonesia diatur dalam UUD NRI 1945 Pasal...",
+                options: ["Pasal 29", "Pasal 31", "Pasal 32", "Pasal 33"],
+                correctAnswer: "Pasal 32",
+                explanation: "Pasal 32 UUD NRI Tahun 1945 mengatur tentang kebudayaan nasional. (Pasal 32 ayat 1: Negara memajukan kebudayaan nasional Indonesia di tengah peradaban dunia dengan menjamin kebebasan masyarakat dalam memelihara dan mengembangkan nilai-nilai budayanya.)",
+                topic: "Hak Budaya",
+            },
+            {
+                id: 23, category: "Sedang",
+                question: "Kewajiban setiap orang untuk membatasi hak asasinya dalam menjalankan hak dan kebebasannya ditetapkan dengan undang-undang. Pembatasan ini bertujuan untuk...",
+                options: ["Menciptakan kekuasaan penuh bagi negara.", "Menghormati hak asasi orang lain dan ketertiban umum.", "Mengutamakan kepentingan individu di atas kelompok.", "Membuktikan bahwa hak warga negara bersifat mutlak."],
+                correctAnswer: "Menghormati hak asasi orang lain dan ketertiban umum.",
+                explanation: "Hak asasi manusia tidak bersifat mutlak, pembatasan diatur oleh Pasal 28J ayat (2) demi menghormati hak orang lain dan memenuhi tuntutan yang adil sesuai pertimbangan moral, nilai-nilai agama, keamanan, dan ketertiban umum.",
+                topic: "Batasan HAM",
+            },
+            {
+                id: 24, category: "Sedang",
+                question: "Contoh pelanggaran hak warga negara yang dilakukan oleh sesama warga negara adalah...",
+                options: ["Pencemaran nama baik di media sosial.", "Pemerintah menggusur lahan tanpa ganti rugi.", "Kepala daerah melakukan korupsi.", "Aparat keamanan melakukan penangkapan tanpa prosedur."],
+                correctAnswer: "Pencemaran nama baik di media sosial.",
+                explanation: "Pencemaran nama baik melanggar hak seseorang atas kehormatan dan nama baik, dan ini bisa dilakukan oleh individu (sesama warga negara).",
+                topic: "Pelanggaran Antar Warga",
+            },
+            {
+                id: 25, category: "Sedang",
+                question: "Jika terjadi pengingkaran kewajiban berupa tidak mematuhi rambu lalu lintas, dampak langsungnya adalah...",
+                options: ["Negara mengalami kerugian finansial besar.", "Kekuatan militer negara melemah.", "Terjadinya kecelakaan lalu lintas dan ketidaktertiban umum.", "Pemerintah dianggap gagal menjamin hak warga."],
+                correctAnswer: "Terjadinya kecelakaan lalu lintas dan ketidaktertiban umum.",
+                explanation: "Kewajiban mematuhi rambu lalu lintas bertujuan menciptakan ketertiban dan keselamatan. Pengingkaran akan langsung berdampak pada keselamatan dan ketertiban di jalan raya.",
+                topic: "Dampak Kewajiban",
+            },
+            {
+                id: 26, category: "Sedang",
+                question: "Bentuk hak yang paling erat kaitannya dengan kemakmuran masyarakat dan diatur dalam Pasal 33 UUD NRI 1945 adalah...",
+                options: ["Hak mendapatkan jaminan pendidikan.", "Hak mendapatkan perlindungan hukum.", "Hak atas perekonomian nasional dan kesejahteraan sosial.", "Hak untuk berserikat dan berkumpul."],
+                correctAnswer: "Hak atas perekonomian nasional dan kesejahteraan sosial.",
+                explanation: "Pasal 33 mengatur tentang perekonomian nasional yang berasaskan kekeluargaan, yang tujuannya adalah kemakmuran bersama dan kesejahteraan sosial.",
+                topic: "Hak Ekonomi",
+            },
+            {
+                id: 27, category: "Sedang",
+                question: "Mengapa hak warga negara atas informasi publik seringkali dilanggar oleh institusi pemerintah?",
+                options: ["Karena informasi tersebut bersifat rahasia negara.", "Karena adanya mekanisme birokrasi yang lambat dan tertutup.", "Karena warga negara tidak memiliki kewajiban untuk mencari informasi.", "Karena semua informasi publik sudah ada di internet."],
+                correctAnswer: "Karena adanya mekanisme birokrasi yang lambat dan tertutup.",
+                explanation: "Keterbukaan informasi publik (KIP) sering terhambat oleh mentalitas birokrasi yang tertutup, mempersulit akses warga negara terhadap hak informasinya.",
+                topic: "Isu Pelanggaran",
+            },
+            {
+                id: 28, category: "Sedang",
+                question: "Manakah yang merupakan kewajiban warga negara berdasarkan UUD NRI Tahun 1945?",
+                options: ["Membayar pajak.", "Memilih presiden dan wakil presiden.", "Menyediakan lapangan pekerjaan.", "Menikmati sumber daya alam."],
+                correctAnswer: "Membayar pajak.",
+                explanation: "Membayar pajak adalah kewajiban (Pasal 23A). Memilih presiden adalah hak. Menyediakan lapangan kerja adalah kewajiban pemerintah. Menikmati SDA adalah hak.",
+                topic: "Identifikasi Kewajiban",
+            },
+            {
+                id: 29, category: "Sedang",
+                question: "Seorang petugas pemungut retribusi parkir tidak menyetorkan seluruh hasil pungutan ke kas daerah. Ini termasuk jenis...",
+                options: ["Pelanggaran hak atas pelayanan publik.", "Pengingkaran kewajiban sebagai aparat pemerintah.", "Pelaksanaan hak untuk mendapatkan upah.", "Pelanggaran hak atas kebebasan ekonomi."],
+                correctAnswer: "Pengingkaran kewajiban sebagai aparat pemerintah.",
+                explanation: "Kewajiban aparat adalah mengelola keuangan negara dengan jujur. Tidak menyetorkan pungutan adalah pengingkaran kewajiban yang berujung pada tindak pidana korupsi/penggelapan.",
+                topic: "Pengingkaran Aparat",
+            },
+            {
+                id: 30, category: "Sedang",
+                question: "Keseimbangan antara hak dan kewajiban warga negara merupakan wujud nyata dari pelaksanaan sila ke-...",
+                options: ["Satu (Ketuhanan Yang Maha Esa).", "Dua (Kemanusiaan yang Adil dan Beradab).", "Tiga (Persatuan Indonesia).", "Empat (Kerakyatan yang Dipimpin...)."],
+                correctAnswer: "Dua (Kemanusiaan yang Adil dan Beradab).",
+                explanation: "Keadilan sosial (Sila 5) dan perlakuan adil (Sila 2) sangat erat kaitannya dengan penunaian kewajiban sebelum menuntut hak, serta memastikan hak setiap orang terpenuhi tanpa melanggar hak orang lain.",
+                topic: "Hubungan dengan Pancasila",
+            },
+            
+            // --- Kategori Sulit/Analisis Kasus (10 Soal) ---
+            {
+                id: 31, category: "Sulit",
+                question: "Kasus: Sebuah pabrik membuang limbah ke sungai, menyebabkan air tercemar dan warga sekitar kehilangan mata pencaharian. Gagasan solutif yang paling komprehensif untuk mengatasi kasus ini adalah...",
+                options: ["Masyarakat melakukan demo besar-besaran di depan pabrik.", "Pemerintah hanya memberikan sanksi denda kepada pabrik.", "Menerapkan audit lingkungan yang ketat, mewajibkan IPAL, serta memberikan edukasi hukum kepada warga dan sanksi pidana bagi direksi.", "Meminta warga pindah dari lokasi tersebut karena sudah tercemar."],
+                correctAnswer: "Menerapkan audit lingkungan yang ketat, mewajibkan IPAL, serta memberikan edukasi hukum kepada warga dan sanksi pidana bagi direksi.",
+                explanation: "Solusi komprehensif mencakup aspek pencegahan (audit/IPAL), penindakan (sanksi pidana), dan pemberdayaan masyarakat (edukasi hukum).",
+                topic: "Solusi Pelanggaran Lingkungan",
+            },
+            {
+                id: 32, category: "Sulit",
+                question: "Seorang pejabat publik terbukti melakukan korupsi. Secara sosiologis-hukum, tindakan ini dapat dikategorikan sebagai pengingkaran kewajiban utama, yaitu...",
+                options: ["Kewajiban menjamin hak rakyat atas kebebasan berserikat.", "Kewajiban untuk tidak melakukan kejahatan jabatan.", "Kewajiban untuk mengelola dan menggunakan sumber daya negara demi kemakmuran rakyat.", "Kewajiban menjaga pertahanan dan keamanan negara."],
+                correctAnswer: "Kewajiban untuk mengelola dan menggunakan sumber daya negara demi kemakmuran rakyat.",
+                explanation: "Korupsi adalah pengingkaran terhadap kewajiban paling mendasar pejabat, yaitu mengelola uang publik yang seharusnya digunakan untuk memenuhi hak-hak dasar (kesehatan, pendidikan, dll.) rakyat.",
+                topic: "Analisis Korupsi",
+            },
+            {
+                id: 33, category: "Sulit",
+                question: "Dalam upaya mengatasi rendahnya kesadaran membayar pajak (pengingkaran kewajiban), gagasan solutif yang paling efektif dan berorientasi jangka panjang adalah...",
+                options: ["Memblokir semua akses pelayanan publik bagi yang tidak membayar pajak.", "Mengadakan undian berhadiah bagi wajib pajak.", "Meningkatkan transparansi penggunaan anggaran pajak oleh pemerintah agar masyarakat percaya.", "Menaikkan tarif pajak secara drastis untuk memaksa pembayaran."],
+                correctAnswer: "Meningkatkan transparansi penggunaan anggaran pajak oleh pemerintah agar masyarakat percaya.",
+                explanation: "Rendahnya kesadaran seringkali disebabkan oleh kurangnya kepercayaan. Solusi jangka panjang adalah membangun kepercayaan melalui transparansi alokasi dan penggunaan dana pajak (akuntabilitas).",
+                topic: "Solusi Pengingkaran Pajak",
+            },
+            {
+                id: 34, category: "Sulit",
+                question: "Mahasiswa berunjuk rasa menentang kebijakan tertentu. Namun, dalam prosesnya, mereka merusak fasilitas umum. Secara yuridis, tindakan perusakan ini menunjukkan bahwa...",
+                options: ["Hak berpendapat lebih tinggi dari kewajiban menjaga fasilitas.", "Hak berpendapat tidak boleh dibatasi sama sekali.", "Kewajiban untuk memelihara ketertiban umum membatasi pelaksanaan hak.", "Pemerintah harus mengganti kerugian atas perusakan tersebut."],
+                correctAnswer: "Kewajiban untuk memelihara ketertiban umum membatasi pelaksanaan hak.",
+                explanation: "Pasal 28J ayat (2) UUD NRI 1945 menegaskan bahwa pelaksanaan HAM (termasuk berpendapat) wajib dibatasi untuk menghormati hak orang lain dan ketertiban umum.",
+                topic: "Batasan Hak (28J)",
+            },
+            {
+                id: 35, category: "Sulit",
+                question: "Seorang warga negara membuat konten 'hoaks' di media sosial. Pelanggaran yang paling mendasar dalam kasus ini adalah...",
+                options: ["Pengingkaran kewajiban untuk menjaga ketertiban umum dan menghormati hak atas informasi benar.", "Pelanggaran hak untuk mendapatkan penghasilan.", "Pengingkaran kewajiban membayar pajak media sosial.", "Pelanggaran hak untuk mendapatkan pengakuan sebagai warganet."],
+                correctAnswer: "Pengingkaran kewajiban untuk menjaga ketertiban umum dan menghormati hak atas informasi benar.",
+                explanation: "Menyebarkan hoaks melanggar kewajiban untuk menaati hukum (UU ITE) dan secara tidak langsung melanggar hak orang lain untuk mendapatkan informasi yang benar dan tidak menyesatkan, yang mengganggu ketertiban sosial.",
+                topic: "Analisis Hoaks",
+            },
+            {
+                id: 36, category: "Sulit",
+                question: "Mengapa kegagalan negara dalam menjamin hak atas pekerjaan dan penghidupan yang layak (Pasal 27 ayat 2) dapat dianggap sebagai 'pelanggaran hak' dan 'pengingkaran kewajiban' secara bersamaan?",
+                options: ["Karena itu hanya masalah birokrasi, bukan masalah hukum.", "Karena negara melanggar hak warga dan mengingkari kewajiban konstitusionalnya untuk menyejahterakan rakyat.", "Karena negara hanya wajib menjamin pendidikan, bukan pekerjaan.", "Karena itu hanya terjadi di daerah terpencil."],
+                correctAnswer: "Karena negara melanggar hak warga dan mengingkari kewajiban konstitusionalnya untuk menyejahterakan rakyat.",
+                explanation: "Negara (pemerintah) memiliki kewajiban konstitusional untuk menyejahterakan rakyat. Jika gagal, berarti negara mengingkari kewajibannya, yang pada gilirannya melanggar hak dasar warga negara atas penghidupan layak.",
+                topic: "Dua Sisi Negara",
+            },
+            {
+                id: 37, category: "Sulit",
+                question: "Seorang siswa menjadi korban *bullying* di sekolah. Untuk mengatasi permasalahan ini secara solutif, langkah yang paling tepat dan berkelanjutan yang harus dirancang sekolah adalah...",
+                options: ["Memberi sanksi DO (Drop Out) langsung kepada pelaku.", "Memperkuat program konseling, membuat sistem pelaporan anonim, dan edukasi anti-bullying rutin bagi semua warga sekolah.", "Hanya mendiamkan karena itu urusan pribadi siswa.", "Melaporkan kasus tersebut ke polisi tanpa penanganan internal."],
+                correctAnswer: "Memperkuat program konseling, membuat sistem pelaporan anonim, dan edukasi anti-bullying rutin bagi semua warga sekolah.",
+                explanation: "Solusi berkelanjutan berfokus pada pencegahan (edukasi), kemudahan pelaporan (anonim), dan penanganan psikologis (konseling), bukan hanya sanksi semata.",
+                topic: "Solusi Pelanggaran di Sekolah",
+            },
+            {
+                id: 38, category: "Sulit",
+                question: "Jika terjadi kelangkaan dan kenaikan harga bahan pokok secara tiba-tiba (pelanggaran hak konsumen). Apa solusi jangka pendek yang harus dilakukan pemerintah untuk mengatasi situasi tersebut?",
+                options: ["Membuka impor besar-besaran dari luar negeri.", "Mencetak uang lebih banyak untuk membantu daya beli rakyat.", "Melakukan operasi pasar/distribusi langsung untuk menstabilkan pasokan dan harga.", "Mengubah undang-undang perdagangan."],
+                correctAnswer: "Melakukan operasi pasar/distribusi langsung untuk menstabilkan pasokan dan harga.",
+                explanation: "Operasi pasar adalah intervensi langsung pemerintah untuk menambah pasokan di pasar, yang merupakan solusi jangka pendek paling cepat untuk menstabilkan harga dan menjamin hak konsumen.",
+                topic: "Solusi Pelanggaran Ekonomi",
+            },
+            {
+                id: 39, category: "Sulit",
+                question: "Seorang pengacara menolak mendampingi klien yang tidak mampu. Tindakan pengacara ini mengingkari kewajiban etika profesi yang secara tidak langsung melanggar hak warga negara atas...",
+                options: ["Hak mendapatkan jaminan kesehatan.", "Hak untuk mendapatkan pekerjaan yang layak.", "Hak atas pengakuan, jaminan, perlindungan, dan kepastian hukum yang adil (Pasal 28D ayat 1).", "Hak untuk bebas dari penyiksaan."],
+                correctAnswer: "Hak atas pengakuan, jaminan, perlindungan, dan kepastian hukum yang adil (Pasal 28D ayat 1).",
+                explanation: "Warga negara berhak mendapatkan keadilan dan perlindungan hukum. Penolakan bantuan hukum bagi yang tidak mampu melanggar esensi dari hak tersebut.",
+                topic: "Analisis Etika Profesi",
+            },
+            {
+                id: 40, category: "Sulit",
+                question: "Pemerintah melakukan pembangunan infrastruktur di daerah yang rawan bencana alam tanpa melakukan kajian risiko yang memadai. Setelah terjadi bencana, banyak korban berjatuhan. Hal ini menunjukkan pemerintah telah...",
+                options: ["Melanggar hak atas lingkungan hidup yang baik.", "Melanggar hak atas keamanan dan keselamatan hidup.", "Mengingkari kewajiban untuk membangun fasilitas umum.", "Mengingkari kewajiban untuk mematuhi hukum."],
+                correctAnswer: "Melanggar hak atas keamanan dan keselamatan hidup.",
+                explanation: "Tindakan tanpa kajian risiko yang memadai (pengabaian kewajiban mitigasi) secara langsung melanggar hak dasar warga negara untuk hidup aman dan terjamin keselamatannya.",
+                topic: "Analisis Keamanan Hidup",
+            }
+        ];
+
+        // Global State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let userName = "";
+        let userClass = "";
+        let isAnswered = false;
+
+        const biodataPage = document.getElementById('biodata-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultPage = document.getElementById('result-page');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const nextQBtn = document.getElementById('next-q-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionArea = document.getElementById('question-area');
+        const feedbackArea = document.getElementById('feedback-area');
+        
+        // --- Core Functions ---
+
+        /**
+         * Shuffles the questions array once at the start.
+         * Note: Due to strict requirements on category distribution, we will shuffle ONLY the options.
+         */
+        function shuffleOptions(options) {
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            return options;
+        }
+
+        /**
+         * Initializes the quiz, reads biodata, and hides the start page.
+         */
+        function startQuiz() {
+            userName = document.getElementById('nama').value.trim();
+            userClass = document.getElementById('kelas').value;
+
+            if (userName === "" || userClass === "") {
+                alert("Mohon isi Nama Lengkap dan Kelas Anda untuk memulai.");
+                return;
+            }
+
+            // Reset state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            isAnswered = false;
+
+            document.getElementById('user-info').textContent = `${userName} (${userClass})`;
+            biodataPage.classList.add('hidden');
+            quizPage.classList.remove('hidden');
+
+            displayQuestion();
+        }
+
+        /**
+         * Displays the current question and its options.
+         */
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            const originalOptions = [...q.options]; // Copy the original options
+            // const shuffledOptions = shuffleOptions(q.options); // Shuffle options for display
+
+            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+            nextQBtn.classList.add('hidden');
+            feedbackArea.classList.add('hidden');
+            feedbackArea.innerHTML = '';
+            isAnswered = false;
+
+            // Generate HTML for question and options
+            let optionsHtml = originalOptions.map((option, index) => {
+                const optionChar = String.fromCharCode(65 + index); // A, B, C, D
+                return `
+                    <div data-option="${option}" class="option-item p-4 mb-3 rounded-lg flex items-center bg-white" onclick="handleAnswer(this, '${option}')">
+                        <span class="font-bold w-6 text-pink-700">${optionChar}.</span>
+                        <span class="ml-3 text-gray-800">${option}</span>
+                    </div>
+                `;
+            }).join('');
+
+            questionArea.innerHTML = `
+                <div class="mb-4">
+                    <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-pink-200 text-pink-700 mb-2">${q.category}</span>
+                    <p class="text-xl font-medium text-gray-800">${q.question}</p>
+                </div>
+                <div id="options-container" class="mt-5 space-y-2">
+                    ${optionsHtml}
+                </div>
+            `;
+        }
+
+        /**
+         * Handles the user's answer selection.
+         * @param {HTMLElement} element - The selected option element.
+         * @param {string} selectedOption - The text of the selected option.
+         */
+        function handleAnswer(element, selectedOption) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === q.correctAnswer;
+            const optionsContainer = document.getElementById('options-container');
+
+            // 1. Disable all options
+            Array.from(optionsContainer.children).forEach(child => {
+                child.classList.add('disabled-option');
+                child.onclick = null;
+            });
+
+            // 2. Highlight selected option
+            if (isCorrect) {
+                element.classList.add('correct-answer');
+                feedbackArea.innerHTML = `<p class="font-bold text-green-700">Kamu Keren! ❤️ ⭐</p><p class="text-gray-700 mt-1">Jawabanmu Benar. Lanjutkan!</p>`;
+                score += 2.5; // 100 / 40 = 2.5 per question
+                correctCount++;
+            } else {
+                element.classList.add('wrong-answer');
+                wrongCount++;
+
+                // Find the correct option and highlight it
+                Array.from(optionsContainer.children).forEach(child => {
+                    if (child.getAttribute('data-option') === q.correctAnswer) {
+                        child.classList.add('correct-answer');
+                    }
+                });
+
+                feedbackArea.innerHTML = `
+                    <p class="font-bold text-red-700">Sayang sekali, Jawabanmu Kurang Tepat.</p>
+                    <div class="mt-2 p-3 bg-pink-100 border-l-4 border-pink-accent rounded-r-lg">
+                        <p class="font-semibold text-pink-700">Penjelasan:</p>
+                        <p class="text-gray-700 text-sm">${q.explanation}</p>
+                    </div>
+                `;
+            }
+
+            // 3. Show feedback and next button
+            feedbackArea.classList.remove('hidden');
+            nextQBtn.classList.remove('hidden');
+        }
+
+        /**
+         * Moves to the next question.
+         */
+        function nextQuestion() {
+            if (!isAnswered) return; // Should not happen if button is shown after answering
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        /**
+         * Shows the final results page.
+         */
+        function showResults() {
+            quizPage.classList.add('hidden');
+            resultPage.classList.remove('hidden');
+
+            const finalScore = Math.round(score); // Round the score
+            document.getElementById('final-score').textContent = finalScore;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+            document.getElementById('result-user-info').textContent = `${userName} (${userClass}) - Hasil Akhir:`;
+        }
+        
+        /**
+         * Restarts the quiz application.
+         */
+        function restartQuiz() {
+            resultPage.classList.add('hidden');
+            biodataPage.classList.remove('hidden');
+            document.getElementById('nama').value = "";
+            document.getElementById('kelas').value = "";
+        }
+
+        // --- Event Listeners ---
+        startQuizBtn.addEventListener('click', startQuiz);
+        nextQBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+    </script>
+</body>
+</html>
